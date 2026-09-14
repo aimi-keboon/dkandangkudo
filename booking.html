@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book an Outride | D'Kandang Kudo Stable</title>
+  <meta name="description"
+    content="Book a public horse trail outride at D'Kandang Kudo Stable. Choose a date and either the morning or evening session. RM250 per session.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">D'Kandang <span>Kudo</span></a>
+      <div class="nav-links">
+        <a href="index.html">Outride</a>
+        <a href="membership.html">Membership</a>
+        <a class="btn btn-primary" href="#booking">Book Outride</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <main>
+    <section class="section" id="booking">
+      <div class="container booking-layout">
+        <div>
+          <h2>Reserve your preferred slot</h2>
+          
+
+          <form class="form booking-form" id="publicBookingForm" method="POST"
+            action="https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec">
+
+            <!-- Anti-spam honeypot / "flowerpot": real riders never see or fill this. -->
+            <div class="flowerpot-wrap" aria-hidden="true">
+              <label for="companyWebsite">Company website</label>
+              <input id="companyWebsite" name="flowerpot" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <input type="hidden" name="source" value="public-outride-booking">
+            <input type="hidden" id="calculatedTotal" name="calculated_total" value="250">
+            <div class="form-grid">
+              <div>
+                <label for="bookingName">Full name</label>
+                <input id="bookingName" name="name" required autocomplete="name" placeholder="Your full name">
+              </div>
+
+              <div>
+                <label for="bookingPhone">Phone number</label>
+                <input id="bookingPhone" name="phone" required autocomplete="tel" placeholder="+60">
+              </div>
+            </div>
+
+            <div>
+              <label for="bookingEmail">Email</label>
+              <input id="bookingEmail" type="email" name="email" required autocomplete="email"
+                placeholder="you@example.com">
+            </div>
+
+  <label for="pax">Number of pax</label>
+  <input id="pax" type="number" name="pax" min="1" step="1" value="1" required inputmode="numeric">
+
+  <div class="small">RM250 per rider / session.</div>
+
+  <div class="pax-disclaimer">
+    This field is for price calculation only. When you proceed to the payment gateway, please select the correct quantity again to match the number of pax in your booking.
+  </div>
+</div>
+
+            <div>
+              <label for="rideDate">Preferred ride date</label>
+              <input id="rideDate" type="date" name="date" required>
+              <div class="small">Choose your preferred date from the calendar.</div>
+            </div>
+
+            <fieldset class="session-fieldset">
+              <legend>Choose a session</legend>
+              <div class="session-options">
+                <label class="session-option">
+                  <input type="radio" name="session" value="Morning — 8:00 AM to 10:00 AM" required>
+                  <span class="session-copy">
+                    <strong>Morning Session</strong>
+                    <span>8:00 AM – 10:00 AM</span>
+                    <small>Approx. 2-hour trail ride</small>
+                  </span>
+                </label>
+
+                <label class="session-option">
+                  <input type="radio" name="session" value="Evening — 4:30 PM to 6:30 PM" required>
+                  <span class="session-copy">
+                    <strong>Evening Session</strong>
+                    <span>4:30 PM – 6:30 PM</span>
+                    <small>Approx. 2-hour trail ride</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="bookingNotes">Notes <span class="small">(optional)</span></label>
+              <textarea id="bookingNotes" name="notes"
+                placeholder="Anything we should know about your riding experience or booking?"></textarea>
+            </div>
+
+            <label class="check-row">
+              <input type="checkbox" id="timingAck" name="timing_ack" value="yes" required>
+              <span>I understand that session timing is approximate and may change due to weather, trail conditions,
+                horse availability, or safety requirements.</span>
+            </label>
+
+            <div class="booking-summary" id="bookingSummary" aria-live="polite">
+              <div>
+                <span class="small">PUBLIC RATE</span>
+                <strong id="bookingTotal">RM250 total</strong>
+                <span class="small" id="paxPriceText">1 pax × RM250</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary booking-submit" type="submit">Save Booking & Continue to Payment</button>
+
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru, Negeri Sembilan
+      ·
+      <a href="tel:+601170371072">011-7037 1072</a> /
+      <a href="tel:+601170371072">014-919 4875</a>
+
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
