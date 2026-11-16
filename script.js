@@ -14,6 +14,16 @@ if (navToggle && navLinks) {
     );
   });
 
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && navLinks.classList.contains("active")) {
+      navLinks.classList.remove("active");
+      navToggle.classList.remove("active");
+      navToggle.setAttribute("aria-expanded", "false");
+      navToggle.setAttribute("aria-label", "Open navigation menu");
+      navToggle.focus();
+    }
+  });
+
   navLinks.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       navLinks.classList.remove("active");
@@ -101,6 +111,7 @@ if (publicBookingForm) {
   const calculatedTotal = document.getElementById("calculatedTotal");
   const selectedSessionText = document.getElementById("selectedSessionText");
   const bookingMessage = document.getElementById("bookingMessage");
+  const rideDateHint = document.getElementById("rideDateHint");
   const flowerpot = publicBookingForm.querySelector('[name="flowerpot"]');
   const submitButton = publicBookingForm.querySelector('button[type="submit"]');
 
@@ -114,29 +125,21 @@ if (publicBookingForm) {
 
   // D'Kandang Kudo Stable is closed every Monday.
   const validateRideDate = () => {
-    if (!dateInput.value) return true;
-
-    const selectedDate = new Date(dateInput.value + "T00:00:00");
-
-    // 0 = Sunday, 1 = Monday, 2 = Tuesday...
-    if (selectedDate.getDay() === 1) {
-      dateInput.setCustomValidity(
-        "We're closed every Monday. Please choose another date.",
-      );
-
-      dateInput.reportValidity();
-      dateInput.value = "";
-      updateSummary();
-
-      return false;
-    }
-
-    dateInput.setCustomValidity("");
-    return true;
+    const isMonday = Boolean(dateInput.value) &&
+      new Date(dateInput.value + "T12:00:00").getDay() === 1;
+    dateInput.setCustomValidity(
+      isMonday ? "We're closed every Monday. Please choose another date." : "",
+    );
+    dateInput.setAttribute("aria-invalid", isMonday ? "true" : "false");
+    rideDateHint.textContent = isMonday
+      ? "We're closed every Monday. Please choose another date."
+      : "Closed on Mondays. Dates and sessions are subject to confirmation.";
+    rideDateHint.classList.toggle("field-error", isMonday);
+    return !isMonday;
   };
 
   dateInput.addEventListener("change", () => {
-    validateRideDate();
+    if (!validateRideDate()) dateInput.reportValidity();
     updateSummary();
   });
 
@@ -144,7 +147,8 @@ if (publicBookingForm) {
     const selected = publicBookingForm.querySelector(
       'input[name="session"]:checked',
     );
-    const pax = Math.max(1, parseInt(paxInput.value || "1", 10));
+    const rawPax = Number.parseInt(paxInput.value, 10);
+    const pax = Number.isFinite(rawPax) && rawPax > 0 ? rawPax : 1;
     const total = pax * 250;
 
     bookingTotal.textContent = `RM${total.toLocaleString()} total`;
@@ -183,7 +187,7 @@ if (publicBookingForm) {
   publicBookingForm.addEventListener("submit", (e) => {
     const endpoint = publicBookingForm.getAttribute("action") || "";
 
-    if (!publicBookingForm.checkValidity()) {
+    if (!validateRideDate() || !publicBookingForm.checkValidity()) {
       e.preventDefault();
       publicBookingForm.reportValidity();
       return;
@@ -206,7 +210,8 @@ if (publicBookingForm) {
     const selected = publicBookingForm.querySelector(
       'input[name="session"]:checked',
     );
-    const pax = Math.max(1, parseInt(paxInput.value || "1", 10));
+    const rawPax = Number.parseInt(paxInput.value, 10);
+    const pax = Number.isFinite(rawPax) && rawPax > 0 ? rawPax : 1;
 
     const booking = {
       name: document.getElementById("bookingName").value.trim(),

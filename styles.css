@@ -1265,3 +1265,119 @@ textarea {
     font-size: 0.7rem;
   }
 }
+
+
+/* Responsive interface refresh */
+:root { --bg:#f7f6f1; --paper:#fffefa; --ink:#19281f; --muted:#526358; --forest:#20533b; --forest-2:#123e2b; --line:#e2e7df; }
+.container { width:min(1120px,calc(100% - 48px)); }
+.nav { background:rgba(255,254,250,.96); }
+.brand { font-size:1.12rem; letter-spacing:-.025em; }
+.nav-links { gap:24px; font-weight:650; }
+.btn { min-height:46px; text-align:center; line-height:1.25; }
+.btn-primary { box-shadow:0 6px 18px rgba(18,62,43,.16); }
+.btn-primary:hover { color:#fff; }
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible { outline:3px solid #d6a854; outline-offset:3px; }
+.skip-link { position:fixed;left:16px;top:-90px;z-index:100;padding:10px 16px;border-radius:10px;background:#fff;color:var(--forest-2);font-weight:700; }
+.skip-link:focus { top:12px; }
+.hero { display:flex;align-items:center;min-height:590px;padding:110px 0;background:linear-gradient(90deg,rgba(10,35,24,.89),rgba(13,43,30,.77) 47%,rgba(20,48,32,.24)),url("img/outride-hero.jpg") center / cover no-repeat; }
+.hero-grid { grid-template-columns:minmax(0,790px); }
+.hero h1 { font-size:clamp(2.7rem,5.5vw,5.25rem);letter-spacing:-.045em;line-height:1.03; }
+.hero .lead { font-size:clamp(1rem,1.6vw,1.15rem);line-height:1.7; }
+.hero-kicker,.section-kicker { margin:0 0 12px;font-size:.85rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase; }
+.hero-kicker { color:#f1d7a6; }
+.section-kicker { color:var(--forest); }
+.hero-facts { display:flex;gap:10px;flex-wrap:wrap;margin-top:24px; }
+.hero-facts span { padding:8px 13px;border:1px solid rgba(255,255,255,.38);border-radius:999px;background:rgba(255,255,255,.1);color:#fff;font-weight:700;font-size:.9rem; }
+.hero-actions { margin-top:30px; }
+.section { padding:clamp(56px,7vw,94px) 0; }
+.section.alt { background:#f0f3ec; }
+.card { background:#fff;box-shadow:0 12px 32px rgba(18,62,43,.06); }
+.grid-3 .card { border-top:4px solid #d9bb87; }
+.grid-3 .card h3 { margin:6px 0 0;font-weight:650;color:var(--muted); }
+.invitation { background:#fffefa; }
+.invitation-inner { display:flex;align-items:center;justify-content:space-between;gap:36px;padding:40px 46px;background:#e9eee5;border:1px solid #dae3d5;border-radius:28px; }
+.invitation h2 { margin-bottom:8px; }
+.invitation p:not(.section-kicker) { margin:0;color:var(--muted); }
+.invitation .btn { flex-shrink:0; }
+.two-col { gap:40px; }
+.location { background:#164531; }
+.location-actions { display:flex;flex-wrap:wrap;gap:10px;margin-top:20px; }
+.btn-light { background:#fff;color:var(--forest-2); }
+.btn-light:hover { background:#f3f5f1; }
+.btn-ghost { color:#fff;border-color:rgba(255,255,255,.55); }
+.btn-ghost:hover { background:rgba(255,255,255,.1); }
+footer { background:#eff2eb;line-height:1.8;text-align:center; }
+footer a { font-weight:800;text-decoration:underline;text-underline-offset:3px; }
+.page-title { font-size:clamp(2.25rem,4.2vw,3.6rem);margin:0 0 14px; }
+.booking-form,#memberForm { box-shadow:0 18px 46px rgba(18,62,43,.07); }
+.form { gap:20px; }
+.form label { display:inline-block;margin-bottom:7px;font-size:.95rem; }
+.form input,.form select,.form textarea { min-height:48px;font-size:1rem;border-color:#c9d3c9; }
+.form input:focus,.form select:focus,.form textarea:focus { border-color:var(--forest);box-shadow:0 0 0 3px rgba(32,83,59,.1); }
+.field-error { color:#a32225;font-weight:700; }
+.session-option:focus-within { outline:3px solid #d6a854;outline-offset:2px; }
+.session-option { min-height:120px; }
+.booking-summary { background:#e9f0e8; }
+.booking-summary #selectedSessionText { margin-top:5px; }
+.form-message { min-height:1.3em;margin:0;font-size:.92rem;color:var(--forest);font-weight:650; }
+#memberForm > div:not(.flowerpot-wrap) { gap:0; }
+@media(max-width:820px) {
+  .container { width:min(calc(100% - 36px),720px); }
+  .hero { min-height:500px;padding:72px 0; }
+  .hero-grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:clamp(2.6rem,7.2vw,4rem); }
+  .hero .lead,.lead { font-size:1.02rem; }
+  .two-col { grid-template-columns:1fr;gap:26px; }
+  .card,.location,.map-card { padding:24px;border-radius:20px; }
+  .card p,.location p,.price-card p,.list,.note { font-size:.95rem; }
+  .btn { padding:12px 18px;font-size:.95rem; }
+  .brand { font-size:1.05rem; }
+  .nav-links { background:#fffefa; }
+  .booking-form,#memberForm { padding:26px; }
+  .form input,.form select,.form textarea,#memberForm input,#memberForm select { padding:12px 14px;font-size:1rem;min-height:48px; }
+  .form label,#memberForm label { font-size:.95rem; }
+  .session-option { padding:16px; }
+  .session-copy { font-size:.94rem; }
+  .session-copy small { font-size:.83rem; }
+  .benefits .card { padding:22px; }
+  .benefits .card h3 { font-size:1.05rem; }
+  .benefits .card p { font-size:.92rem; }
+  .stable-map iframe { height:300px; }
+}
+@media(max-width:600px) {
+  .container { width:calc(100% - 32px); }
+  .hero { min-height:0;padding:78px 0 70px; }
+  .hero h1 { font-size:clamp(2.45rem,10vw,3.5rem); }
+  .hero-facts span { font-size:.78rem;padding:7px 10px; }
+  .hero-actions .btn { flex:1 1 160px; }
+  h2 { font-size:clamp(1.7rem,7vw,2.25rem); }
+  h3 { font-size:1.05rem; }
+  .section { padding:52px 0; }
+  .grid-3,.benefits,.form-grid,.session-options { grid-template-columns:1fr;gap:14px; }
+  .card,.location,.map-card { padding:22px; }
+  .invitation-inner { align-items:stretch;flex-direction:column;padding:26px 22px;gap:22px; }
+  .invitation .btn { width:100%; }
+  .location-actions { flex-direction:column; }
+  .location-actions .btn { width:100%; }
+  .stable-map iframe { height:270px; }
+  #booking,#register { padding:42px 0; }
+  .booking-form,#memberForm { padding:20px;border-radius:18px; }
+  .form { gap:18px; }
+  .form input,.form select,.form textarea,#memberForm input,#memberForm select { font-size:1rem;min-height:48px; }
+  .form label,#memberForm label { font-size:.95rem; }
+  .session-option { min-height:0;padding:16px; }
+  .session-copy { font-size:.97rem; }
+  .session-copy small { font-size:.85rem; }
+  .check-row { padding:14px;font-size:.9rem; }
+  .booking-summary { padding:16px; }
+  .booking-summary strong { font-size:1.4rem; }
+  .booking-submit,#memberForm button[type=submit] { min-height:52px; }
+  .pax-disclaimer { padding:12px;font-size:.88rem; }
+  .membership-hero { padding:60px 0 48px; }
+  .membership-hero h1 { font-size:clamp(2.35rem,9vw,3.4rem); }
+  .membership-hero .lead { font-size:1rem; }
+  .benefits .card { padding:22px; }
+  .benefits .card h3 { font-size:1.04rem; }
+  .benefits .card p { font-size:.94rem; }
+}
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .btn,.card,.session-option { transition:none; } }

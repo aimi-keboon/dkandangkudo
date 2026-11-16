@@ -11,6 +11,7 @@
 </head>
 
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <nav class="nav">
   <div class="container nav-inner">
     <a class="brand" href="index.html">D'Kandang <span>Kudo</span></a>
@@ -36,11 +37,13 @@
 </nav>
 
 
-  <main>
+  <main id="main-content">
     <section class="section" id="booking">
       <div class="container booking-layout">
         <div>
-          <h2>Reserve your preferred slot</h2>
+          <p class="section-kicker">Book a jungle outride</p>
+          <h1 class="page-title">Reserve your preferred slot</h1>
+          <p class="lead">Choose a date and session, enter your details and continue to payment. We'll contact you to confirm your booking.</p>
           
 
           <form class="form booking-form" id="publicBookingForm" method="POST"
@@ -61,7 +64,7 @@
 
               <div>
                 <label for="bookingPhone">Phone number</label>
-                <input id="bookingPhone" name="phone" required autocomplete="tel" placeholder="+60">
+                <input id="bookingPhone" name="phone" type="tel" inputmode="tel" required autocomplete="tel" placeholder="+60 12-345 6789">
               </div>
             </div>
 
@@ -71,20 +74,17 @@
                 placeholder="you@example.com">
             </div>
 
-  <label for="pax">Number of pax</label>
-  <input id="pax" type="number" name="pax" min="1" step="1" value="1" required inputmode="numeric">
-
-  <div class="small">RM250 per rider / session.</div>
-
-  <div class="pax-disclaimer">
-    This field is for price calculation only. When you proceed to the payment gateway, please select the correct quantity again to match the number of pax in your booking.
-  </div>
-</div>
+            <div class="field-group">
+              <label for="pax">Number of riders</label>
+              <input id="pax" type="number" name="pax" min="1" step="1" value="1" required inputmode="numeric">
+              <div class="small">RM250 per rider / session.</div>
+              <p class="pax-disclaimer">At the payment gateway, please select the same quantity as the number of riders entered here.</p>
+            </div>
 
             <div>
               <label for="rideDate">Preferred ride date</label>
               <input id="rideDate" type="date" name="date" required>
-              <div class="small">Choose your preferred date from the calendar.</div>
+              <div class="small" id="rideDateHint">Closed on Mondays. Dates and sessions are subject to confirmation.</div>
             </div>
 
             <fieldset class="session-fieldset">
@@ -127,10 +127,12 @@
                 <span class="small">PUBLIC RATE</span>
                 <strong id="bookingTotal">RM250 total</strong>
                 <span class="small" id="paxPriceText">1 pax × RM250</span>
+                <span class="small" id="selectedSessionText">Choose a date and session above.</span>
               </div>
             </div>
 
-            <button class="btn btn-primary booking-submit" type="submit">Save Booking & Continue to Payment</button>
+            <button class="btn btn-primary booking-submit" type="submit">Save Booking &amp; Continue to Payment</button>
+            <p id="bookingMessage" class="form-message" role="status" aria-live="polite"></p>
 
           </form>
         </div>
@@ -142,8 +144,7 @@
     <div class="container">
       © <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru, Negeri Sembilan
       ·
-      <a href="tel:+601170371072">011-7037 1072</a> /
-      <a href="tel:+601170371072">014-919 4875</a>
+      <a href="tel:+60192584291">+60 19-258 4291</a>
 
     </div>
   </footer>

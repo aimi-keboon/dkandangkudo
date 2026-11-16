@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <nav class="nav">
   <div class="container nav-inner">
     <a class="brand" href="index.html">D'Kandang <span>Kudo</span></a>
@@ -38,10 +39,9 @@
       <p class="lead">Join for RM50/month and earn a bigger outride discount as you ride more, up to a maximum of 30%.</p>
 
       </div>
-    </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="section alt" id="benefits">
       <div class="container">
         <h2>More than an outride discount.</h2>
@@ -70,7 +70,7 @@
       <div class="container two-col">
         <div>
           <h2>Member details</h2>
-          <p class="lead">Fill in your details to register as a member.</p>
+          <p class="lead">Join for RM50/month. Enter your details below to register and continue to payment.</p>
           <form class="form" id="memberForm" method="POST" action="https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec">
 
 <!-- Anti-spam honeypot / "flowerpot": real users never see or fill this. -->
@@ -91,7 +91,7 @@
             </div>
             <div>
               <label for="phone">Phone number</label>
-              <input id="phone" name="phone" required autocomplete="tel">
+              <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel" placeholder="+60 12-345 6789">
             </div>
             <div>
               <label for="email">Email</label>
@@ -100,12 +100,14 @@
             <div>
               <label for="experience">Riding experience</label>
               <select id="experience" name="experience" required>
+                <option value="" disabled selected>Select your experience</option>
                 <option>Beginner</option>
                 <option>Intermediate</option>
                 <option>Experienced</option>
               </select>
             </div>
-            <button class="btn btn-primary" type="submit">Register</button>
+            <button class="btn btn-primary" type="submit">Continue to membership payment</button>
+            <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
           </form>
         </div>
 
@@ -117,8 +119,7 @@
   <div class="container">
     © <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru, Negeri Sembilan
     ·
-    <a href="tel:+601170371072">011-7037 1072</a> /
-    <a href="tel:+601170371072">014-919 4875</a>
+    <a href="tel:+60192584291">+60 19-258 4291</a>
   </div>
 </footer>
   <script src="script.js"></script>
