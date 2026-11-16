@@ -43,11 +43,11 @@
         <div>
           <p class="section-kicker">Book a jungle outride</p>
           <h1 class="page-title">Reserve your preferred slot</h1>
-          <p class="lead">Choose a date and session, enter your details and continue to payment. We'll contact you to confirm your booking.</p>
+          <p class="lead">Choose a date and session, add the details for every rider, then review the total before secure Stripe payment. A booking is only confirmed after our team checks availability and rider suitability.</p>
           
 
           <form class="form booking-form" id="publicBookingForm" method="POST"
-            action="https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec">
+            action="YOUR_NEW_DKK_APPS_SCRIPT_EXEC_URL">
 
             <!-- Anti-spam honeypot / "flowerpot": real riders never see or fill this. -->
             <div class="flowerpot-wrap" aria-hidden="true">
@@ -56,30 +56,37 @@
             </div>
             <input type="hidden" name="source" value="public-outride-booking">
             <input type="hidden" id="calculatedTotal" name="calculated_total" value="250">
+            <input type="hidden" id="ridersJson" name="riders_json" value="">
             <div class="form-grid">
               <div>
-                <label for="bookingName">Full name</label>
+                <label for="bookingName">Main booking contact name</label>
                 <input id="bookingName" name="name" required autocomplete="name" placeholder="Your full name">
               </div>
 
               <div>
-                <label for="bookingPhone">Phone number</label>
+                <label for="bookingPhone">Main booking contact mobile</label>
                 <input id="bookingPhone" name="phone" type="tel" inputmode="tel" required autocomplete="tel" placeholder="+60 12-345 6789">
               </div>
             </div>
 
             <div>
-              <label for="bookingEmail">Email</label>
+              <label for="bookingEmail">Confirmation email</label>
               <input id="bookingEmail" type="email" name="email" required autocomplete="email"
                 placeholder="you@example.com">
             </div>
 
             <div class="field-group">
               <label for="pax">Number of riders</label>
-              <input id="pax" type="number" name="pax" min="1" step="1" value="1" required inputmode="numeric">
+              <input id="pax" type="number" name="pax" min="1" max="10" step="1" value="1" required inputmode="numeric">
               <div class="small">RM250 per rider / session.</div>
-              <p class="pax-disclaimer">At the payment gateway, please select the same quantity as the number of riders entered here.</p>
+              <p class="small">Each rider requires their own name, mobile, weight, experience and optional rental selections. Maximum 10 riders per booking.</p>
             </div>
+
+            <fieldset class="riders-fieldset">
+              <legend>Rider details</legend>
+              <p class="small">Enter each rider's information separately so we can prepare suitable horses and rental equipment.</p>
+              <div id="ridersContainer" class="riders-container"></div>
+            </fieldset>
 
             <div>
               <label for="rideDate">Preferred ride date</label>
@@ -124,14 +131,16 @@
 
             <div class="booking-summary" id="bookingSummary" aria-live="polite">
               <div>
-                <span class="small">PUBLIC RATE</span>
+                <span class="small">OUTRIDE + OPTIONAL RENTALS</span>
                 <strong id="bookingTotal">RM250 total</strong>
-                <span class="small" id="paxPriceText">1 pax × RM250</span>
+                <span class="small" id="paxPriceText">1 rider × RM250</span>
+                <span class="small" id="rentalPriceText">Rentals: RM0</span>
                 <span class="small" id="selectedSessionText">Choose a date and session above.</span>
               </div>
             </div>
 
-            <button class="btn btn-primary booking-submit" type="submit">Save Booking &amp; Continue to Payment</button>
+            <button class="btn btn-primary booking-submit" type="submit">Review Booking &amp; Continue to Stripe</button>
+            <p class="small">The displayed total is recalculated by our secure payment service. Your preferred slot is subject to confirmation by the stable.</p>
             <p id="bookingMessage" class="form-message" role="status" aria-live="polite"></p>
 
           </form>
@@ -150,6 +159,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="booking.js"></script>
 </body>
 
 </html>

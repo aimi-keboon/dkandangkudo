@@ -1381,3 +1381,29 @@ footer a { font-weight:800;text-decoration:underline;text-underline-offset:3px; 
   .benefits .card p { font-size:.94rem; }
 }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .btn,.card,.session-option { transition:none; } }
+
+
+/* Group outride and subscription checkout */
+.riders-fieldset { border:0;padding:0;margin:0;min-width:0; }
+.riders-fieldset legend { font-size:1.1rem;font-weight:800;margin-bottom:8px; }
+.riders-container { display:grid;gap:18px;margin-top:18px; }
+.rider-card { padding:22px;border:1px solid var(--line);border-radius:18px;background:#f7f9f5; }
+.rider-card h3 { margin:0 0 16px;color:var(--forest); }
+.rider-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+.rider-grid>div { min-width:0; }
+.rider-grid label { display:block; }
+.rider-grid input,.rider-grid select { width:100%; }
+.rental-options { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px; }
+.rental-options label { display:flex!important;align-items:center;gap:9px;padding:14px;border:1px solid #d5e2d3;border-radius:12px;background:#fff;font-weight:650!important;margin:0!important;cursor:pointer; }
+.rental-options input { width:18px;min-height:18px;height:18px;flex:0 0 18px;accent-color:var(--forest); }
+.rental-options label span { margin-left:auto;white-space:nowrap;color:var(--forest); }
+.membership-checkout-summary { display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px;background:#e8f0e7;border-radius:16px; }
+.membership-checkout-summary strong { color:var(--forest);font-size:1.55rem; }
+.membership-checkout-summary span { color:var(--muted);font-size:.9rem;max-width:260px; }
+#memberForm .check-row { display:flex;align-items:flex-start;gap:12px; }
+#memberForm .check-row input { flex:0 0 18px;width:18px;height:18px;min-height:18px;margin-top:3px; }
+@media(max-width:600px) {
+  .rider-card { padding:17px; }
+  .rider-grid,.rental-options { grid-template-columns:1fr;gap:12px; }
+  .membership-checkout-summary { flex-direction:column;align-items:flex-start; }
+}
