@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
     <nav class="nav">
       <div class="container nav-inner">
         <a class="brand" href="index.html">D'Kandang <span>Kudo</span></a>
@@ -39,12 +40,14 @@
     <header class="hero">
       <div class="container hero-grid">
         <div>
-          <h1>Ride beyond the arena.</h1>
+          <p class="hero-kicker">Guided trails · Siliau, Negeri Sembilan</p>
+          <h1>Beyond the arena.<br>Into the outdoors.</h1>
           <p class="lead">
             A guided jungle and countryside horse trail around Kampung Jimah,
             Siliau, Negeri Sembilan. Cover approximately 20 km over about 2
             hours and enjoy a proper outdoor riding experience.
           </p>
+          <div class="hero-facts" aria-label="Outride at a glance"><span>Approx. 20 km</span><span>Around 2 hours</span><span>RM250 per rider</span></div>
           <div class="hero-actions">
             <a class="btn btn-primary" href="booking.html">Book Outride</a>
             <a class="btn btn-outline" href="membership.html">Membership</a>
@@ -53,7 +56,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="main-content">
       <section class="section alt" id="experience">
         <div class="container">
           <h2>Two hours on the trail.</h2>
@@ -80,30 +83,16 @@
         </div>
       </section>
 
-      <section class="section" id="social">
-        <div class="container">
-          <h2>Follow D'Kandang Kudo</h2>
-
-          <blockquote
-            class="tiktok-embed"
-            cite="https://www.tiktok.com/@baim.6130"
-            data-unique-id="baim.6130"
-            data-embed-type="creator"
-            style="max-width: 720px; min-width: 288px; margin: 20px auto 0"
-          >
-            <section>
-              <a
-                target="_blank"
-                href="https://www.tiktok.com/@baim.6130?refer=creator_embed"
-              >
-                @baim.6130
-              </a>
-            </section>
-          </blockquote>
+      <section class="section invitation" aria-labelledby="ready-heading">
+        <div class="container invitation-inner">
+          <div>
+            <p class="section-kicker">Ready for the trail?</p>
+            <h2 id="ready-heading">Make your next ride memorable.</h2>
+            <p>Choose a preferred date and session. We'll contact you to confirm your booking details after payment.</p>
+          </div>
+          <a class="btn btn-primary" href="booking.html">Plan your outride</a>
         </div>
       </section>
-
-      <script async src="https://www.tiktok.com/embed.js"></script>
 
       <section class="section" id="location">
         <div class="container two-col">
@@ -140,6 +129,10 @@
               information regarding your session.
             </p>
 
+            <div class="location-actions">
+              <a class="btn btn-light" href="https://www.google.com/maps/search/?api=1&amp;query=LOT%202947%2C%20Kampung%20Jimah%20Baru%2C%2071950%20Siliau%2C%20Negeri%20Sembilan%2C%20Malaysia" target="_blank" rel="noopener noreferrer">Get directions</a>
+              <a class="btn btn-ghost" href="tel:+60192584291">Call +60 19-258 4291</a>
+            </div>
             <div class="stable-map">
               <iframe
                 title="Map to D'Kandang Kudo Stable"
@@ -158,8 +151,7 @@
     <footer>
       <div class="container">
         © <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru,
-        Negeri Sembilan · <a href="tel:+601170371072">011-7037 1072</a> /
-        <a href="tel:+601170371072">014-919 4875</a>
+        Negeri Sembilan · <a href="tel:+60192584291">+60 19-258 4291</a>
       </div>
     </footer>
     <script src="script.js"></script>
