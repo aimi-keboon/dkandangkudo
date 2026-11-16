@@ -15,7 +15,6 @@
   const escape = value => String(value).replace(/[&<>"']/g, c =>
     ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const maxRiders = 10;
-  const riderState = [];
 
   function currentRiders() {
     return [...container.querySelectorAll(".rider-card")].map(card => ({
@@ -72,7 +71,7 @@
     const count = Number.isInteger(desired) ? Math.max(1, Math.min(maxRiders, desired)) : 1;
     paxInput.value = String(count);
     container.innerHTML = Array.from({length: count}, (_, i) =>
-      riderCard(i, previous[i] || riderState[i] || {})).join("");
+      riderCard(i, previous[i] || {})).join("");
     updateSummary();
   }
   const now = new Date();
@@ -93,9 +92,6 @@
   }
 
   paxInput.addEventListener("change", render);
-  paxInput.addEventListener("input", () => {
-    if (paxInput.value && Number(paxInput.value) >= 1 && Number(paxInput.value) <= maxRiders) render();
-  });
   container.addEventListener("input", updateSummary);
   container.addEventListener("change", updateSummary);
   dateInput.addEventListener("change", () => { validDate(); updateSummary(); });

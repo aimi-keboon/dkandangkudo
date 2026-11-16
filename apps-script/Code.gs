@@ -115,12 +115,12 @@ function eligibleDate_(text) {
   const date=new Date(text+"T12:00:00+08:00");
   if(!Number.isFinite(date.getTime()) || Utilities.formatDate(date,"Asia/Kuala_Lumpur","yyyy-MM-dd")!==text) return false;
   const today=Utilities.formatDate(new Date(),"Asia/Kuala_Lumpur","yyyy-MM-dd");
-  return text>=today && date.getUTCDay()!==0; // Monday in MYT = Sunday 16:00 UTC; see local weekday below
+  return text>=today;
 }
 function validRideDate_(text) {
   if(!eligibleDate_(text))return false;
   const date=new Date(text+"T12:00:00+08:00");
-  return Utilities.formatDate(date,"Asia/Kuala_Lumpur","u")!=="1";
+  return date.getUTCDay()!==1; // Malaysia local noon has the same calendar weekday in UTC
 }
 function parseOutride_(p) {
   const name=String(p.name||"").trim(), phone=String(p.phone||"").trim(),email=String(p.email||"").trim();
@@ -385,4 +385,25 @@ function notifyPaid_(to,id,text) {
       subject:"Payment update — "+id,body:text+"\nReference: "+id,
       name:"D'Kandang Kudo Stable"});
   }catch(err){console.warn("Payment email failed: "+err.message);}
+}
+
+
+/** Manual validation smoke checks; no API calls, charges or Sheet writes. */
+function testDkkBookingValidation() {
+  if(validRideDate_("2026-11-16"))throw new Error("Monday must be rejected");
+  const sample={
+    name:"Group Contact",phone:"+60192584291",email:"example@example.com",
+    pax:"2",date:"2026-11-17",session:DKK.sessions[0],timing_ack:"yes",
+    riders_json:JSON.stringify([
+      {name:"Rider One",phone:"+60111111111",weight:"65",experience:"Beginner",helmet:true,boots:false},
+      {name:"Rider Two",phone:"+60122222222",weight:"72",experience:"Intermediate",helmet:false,boots:true}
+    ])
+  };
+  const today=Utilities.formatDate(new Date(),"Asia/Kuala_Lumpur","yyyy-MM-dd");
+  if(sample.date>=today){
+    const result=parseOutride_(sample);
+    if(result.totalCents!==53000||result.helmets!==1||result.boots!==1)
+      throw new Error("Incorrect two-rider calculation.");
+  }
+  console.log("Basic validations passed; no payment was created.");
 }
