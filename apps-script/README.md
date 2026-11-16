@@ -1,6 +1,11 @@
 # D'Kandang Kudo — group riders and Stripe Checkout
 
-This branch adapts the KEBOON Shop pattern: GitHub Pages sends a normal HTML POST to a separate Google Apps Script, which creates Stripe Checkout Sessions and verifies payment status by querying Stripe's API. No Stripe key is stored in GitHub.
+This branch adapts the KEBOON Shop pattern: GitHub Pages posts to Google Apps Script, which creates Stripe Checkout Sessions and verifies payment through Stripe's API. No Stripe key is stored in GitHub.
+
+**Existing deployment:** The website action is now wired to the user's current Apps Script deployment:
+https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec
+
+**Critical:** This is the URL of the EXISTING booking/membership handler, not proof that the new Code.gs is deployed. Existing code does not understand the new `riders_json` and `subscription_ack` fields, or secure server-calculated rental line items. Do not merge PR #2 until this exact deployment serves the updated Code.gs and live payments are enabled. Google Apps Script deployments run a published version, not necessarily the editor's latest saved code.
 
 ## Prices
 
@@ -12,7 +17,7 @@ This branch adapts the KEBOON Shop pattern: GitHub Pages sends a normal HTML POS
 
 ## Deployment — required before checkout works
 
-1. Create a NEW standalone Google Apps Script project. Back up the existing Apps Script and Sheet before migration. Paste the entire apps-script/Code.gs file into the new project.
+1. **Reuse the same Apps Script project if you want to retain the provided /exec URL.** Back up the original Code.gs and existing Google Sheet first, then replace the project's handler code with the complete contents of `apps-script/Code.gs`. If you prefer zero-downtime transition, create a second Apps Script project/deployment and update the form URLs instead; a new standalone project will NOT retain the existing deployment URL.
 2. In Apps Script > Project settings > Script properties, configure:
 
    DKK_SPREADSHEET_ID — the existing D'Kandang Kudo spreadsheet ID
@@ -22,10 +27,10 @@ This branch adapts the KEBOON Shop pattern: GitHub Pages sends a normal HTML POS
    DKK_ADMIN_EMAIL — optional admin email for verified payment notifications
 
 3. Run setupDkkCheckout once and grant Sheets, MailApp, UrlFetchApp, and trigger permissions. It retains the existing Outride Bookings and Membership Registrations columns, appends tracking columns, adds an Outride Riders tab, and installs a syncDkkPayments trigger about every 5 minutes.
-4. Deploy as a Web app, Execute as Me, access Anyone. Copy the URL ending /exec. Replace YOUR_NEW_DKK_APPS_SCRIPT_EXEC_URL in BOTH booking.html and membership.html with that URL. The placeholder deliberately keeps checkout unavailable before setup.
+4. **For the existing deployment ID:** go to Apps Script > Deploy > Manage deployments, edit the existing Web app deployment, choose **New version**, and deploy with Execute as **Me** and access **Anyone**. Confirm the resulting /exec URL matches the one above (already set in both HTML forms). A simple Save does not update a deployed version. If the URL differs, update both forms on the PR branch.
 5. Reuse the existing LIVE D'Kandang Kudo monthly MYR RM50 Price already configured in Code.gs. This price was verified in the connected Stripe account. Set the matching live Stripe key privately in Apps Script; never paste the key in GitHub or chat.
 6. Once ready for real transactions, set DKK_CHECKOUT_ENABLED=true. **All successful Stripe checkouts charge real money; membership starts recurring live billing.** Review group totals, rental choices, booking dates and member subscription terms carefully. A live trial purchase is a real charge and needs a refund or cancellation if reversed.
-7. Before switching checkout on, confirm rider weight suitability policy, group limits, equipment availability, refund/cancellation terms, customer-data privacy and staff confirmation. Redeploy a new Apps Script version after any changes. Keep PR #2 as a draft until the new endpoint has been configured and verified.
+7. Before switching checkout on, confirm rider weight suitability policy, group limits, equipment availability, refund/cancellation terms, customer-data privacy and staff confirmation. **Coordinate the website merge with the Apps Script deployment:** the old website does not send per-rider JSON while the updated Apps Script requires it, and the new website will malfunction against the old Apps Script. Plan a short maintenance/cutover window, or use a separately deployed endpoint until both sides are ready. Keep PR #2 as a draft until confirmed.
 
 ## Status and privacy
 
