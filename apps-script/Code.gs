@@ -12,6 +12,8 @@ const DKK = Object.freeze({
   rentalCents: 1500,
   membershipCents: 5000,
   maxPax: 10,
+  // Existing LIVE Stripe subscription price for D'Kandang Kudo Stable Membership.
+  membershipPriceId: "price_1UEnG7L8CyJDBl205qCoFbh9",
   sessions: ["Morning — 8:00 AM to 10:00 AM", "Evening — 4:30 PM to 6:30 PM"],
   experiences: ["Beginner", "Intermediate", "Experienced"]
 });
@@ -68,7 +70,7 @@ function setupDkkCheckout() {
 }
 function stripe_(method,path,fields) {
   const secret = String(props_().getProperty("DKK_STRIPE_SECRET_KEY") || "");
-  if (!/^sk_(test|live)_/.test(secret)) throw new Error("DKK_STRIPE_SECRET_KEY not configured");
+  if (!/^sk_live_/.test(secret)) throw new Error("A live Stripe secret key is required in DKK_STRIPE_SECRET_KEY");
   const options = {
     method:method,
     headers:{"Authorization":"Bearer "+secret},
@@ -222,10 +224,10 @@ function doPost(e) {
     }
     if(source==="membership-registration") {
       const m=validateMembership_(p);rateLimit_(m.email,m.phone);
-      const priceId=String(props_().getProperty("DKK_MEMBERSHIP_PRICE_ID")||"");
+      const priceId=DKK.membershipPriceId;
       if(!/^price_[A-Za-z0-9]+$/.test(priceId))throw new Error("Subscription price is not configured.");
       const price=stripe_("get","/prices/"+encodeURIComponent(priceId));
-      if(!price.active||price.currency!=="myr"||price.unit_amount!==DKK.membershipCents||
+      if(!price.livemode||!price.active||price.currency!=="myr"||price.unit_amount!==DKK.membershipCents||
           !price.recurring||price.recurring.interval!=="month"||price.recurring.interval_count!==1)
         throw new Error("The Stripe membership price must be recurring RM50/month.");
       const id=reference_("MEM");

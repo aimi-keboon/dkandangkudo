@@ -16,16 +16,16 @@ This branch adapts the KEBOON Shop pattern: GitHub Pages sends a normal HTML POS
 2. In Apps Script > Project settings > Script properties, configure:
 
    DKK_SPREADSHEET_ID — the existing D'Kandang Kudo spreadsheet ID
-   DKK_STRIPE_SECRET_KEY — a Stripe TEST secret key initially (sk_test_...)
-   DKK_MEMBERSHIP_PRICE_ID — a test Stripe recurring monthly MYR 50 Price ID (price_...)
-   DKK_CHECKOUT_ENABLED — false to start; true during controlled sandbox testing
+   DKK_STRIPE_SECRET_KEY — your LIVE Stripe secret key (sk_live_...) from the Keboon account, stored ONLY in private Script Properties
+   Membership Price ID — already hardcoded in Code.gs to the existing live D'Kandang Kudo Stable Membership, RM50/month: price_1UEnG7L8CyJDBl205qCoFbh9. No new Price is needed.
+   DKK_CHECKOUT_ENABLED — false until the live deployment is ready, then true to enable real charges
    DKK_ADMIN_EMAIL — optional admin email for verified payment notifications
 
 3. Run setupDkkCheckout once and grant Sheets, MailApp, UrlFetchApp, and trigger permissions. It retains the existing Outride Bookings and Membership Registrations columns, appends tracking columns, adds an Outride Riders tab, and installs a syncDkkPayments trigger about every 5 minutes.
 4. Deploy as a Web app, Execute as Me, access Anyone. Copy the URL ending /exec. Replace YOUR_NEW_DKK_APPS_SCRIPT_EXEC_URL in BOTH booking.html and membership.html with that URL. The placeholder deliberately keeps checkout unavailable before setup.
-5. Create a Stripe TEST active MYR RM50/month recurring Price in your Stripe account. Set its Price ID and matching test secret key in private Apps Script properties; do not commit any secret.
-6. Enable DKK_CHECKOUT_ENABLED in your TEST deployment. Test single and multiple riders, rental choices, Monday rejection, invalid weights, successful and abandoned checkouts, and recurring membership. After paying in Stripe sandbox, run syncDkkPayments or wait for its trigger, then check all Sheets.
-7. Only after test success: review rider weight suitability policy, group limits, equipment availability, cancellation/refunds, data retention/privacy, session capacity and your confirmation process. To go live use the LIVE Stripe key and LIVE recurring Price ID in matching mode and a clean production testing/record strategy. Redeploy a new Apps Script version after updates.
+5. Reuse the existing LIVE D'Kandang Kudo monthly MYR RM50 Price already configured in Code.gs. This price was verified in the connected Stripe account. Set the matching live Stripe key privately in Apps Script; never paste the key in GitHub or chat.
+6. Once ready for real transactions, set DKK_CHECKOUT_ENABLED=true. **All successful Stripe checkouts charge real money; membership starts recurring live billing.** Review group totals, rental choices, booking dates and member subscription terms carefully. A live trial purchase is a real charge and needs a refund or cancellation if reversed.
+7. Before switching checkout on, confirm rider weight suitability policy, group limits, equipment availability, refund/cancellation terms, customer-data privacy and staff confirmation. Redeploy a new Apps Script version after any changes. Keep PR #2 as a draft until the new endpoint has been configured and verified.
 
 ## Status and privacy
 
@@ -37,4 +37,4 @@ Because Apps Script web apps cannot reliably read Stripe-Signature headers, as i
 
 Membership self-service cancellation via Customer Portal and progressive membership discounts on outrides are not yet automated. Don't claim those features are implemented. Before collecting payment for a requested outride, decide whether the stable will refund when availability/suitability is declined; an approval-first workflow may be preferable.
 
-No real payment, Stripe account change or Apps Script deployment was performed by creating this PR.
+No real payments, Stripe account changes or Apps Script deployments were performed by creating this PR. This branch is configured for live Stripe only; do not enable it until ready for real transactions.
