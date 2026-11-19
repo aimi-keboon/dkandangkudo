@@ -70,7 +70,7 @@
       <div class="container two-col">
         <div>
           <h2>Member details</h2>
-          <p class="lead">Join for RM50/month. Enter your details below to register and continue to payment.</p>
+          <p class="lead">One membership is RM50 per month, billed automatically through Stripe until cancelled. Fill in your details to set up your subscription. Membership becomes active after Stripe verifies payment.</p>
           <form class="form" id="memberForm" method="POST" action="https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec">
 
 <!-- Anti-spam honeypot / "flowerpot": real users never see or fill this. -->
@@ -106,7 +106,9 @@
                 <option>Experienced</option>
               </select>
             </div>
-            <button class="btn btn-primary" type="submit">Continue to membership payment</button>
+            <div class="membership-checkout-summary"><strong>RM50 / month</strong><span>Recurring monthly membership · cancel subject to membership terms</span></div>
+            <label class="check-row"><input type="checkbox" name="subscription_ack" value="yes" required><span>I understand this is a recurring RM50 monthly subscription, not a one-time registration fee.</span></label>
+            <button class="btn btn-primary" type="submit">Continue to secure Stripe subscription</button>
             <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
           </form>
         </div>
