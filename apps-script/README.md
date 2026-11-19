@@ -43,3 +43,10 @@ Because Apps Script web apps cannot reliably read Stripe-Signature headers, as i
 Membership self-service cancellation via Customer Portal and progressive membership discounts on outrides are not yet automated. Don't claim those features are implemented. Before collecting payment for a requested outride, decide whether the stable will refund when availability/suitability is declined; an approval-first workflow may be preferable.
 
 No real payments, Stripe account changes or Apps Script deployments were performed by creating this PR. This branch is configured for live Stripe only; do not enable it until ready for real transactions.
+## Stripe total matching safeguard
+
+Outride Stripe Checkout Sessions use server-calculated inline MYR prices, not an existing `buy.stripe.com` Payment Link. Apps Script independently validates all `riders_json` entries and adds RM250 per rider + RM15 per helmet and RM15 per pair of boots. Before returning any payment button, it now verifies Stripe's returned `amount_total`, `currency`, `client_reference_id`, and mode, and rejects/attempts to expire mismatched sessions. Membership uses the existing fixed RM50/month Stripe Price and checks its first Checkout Session total separately.
+
+**If a visitor still sees the old Stripe product price, it means they are using a legacy Payment Link, or the web app is running an outdated deployment version.** In the same Apps Script project, replace Code.gs with the updated source, then Deploy > Manage deployments > Edit > New version > Deploy. Confirm that the deployed `/exec` URL is the one currently used in booking.html and membership.html. Simply saving Code.gs does not update the deployed web app. Search any other on-site contact links or emails for old `buy.stripe.com` links, since these bypass the new group total.
+
+Run `testDkkBookingValidation()` to check that 3 riders + 2 helmets + 1 boots equals RM795 without creating a Stripe charge. This is a local calculation self-test, **not** an end-to-end payment verification. Never collect live payment until the amount shown in Stripe matches the booking summary and the checkout source is correct.

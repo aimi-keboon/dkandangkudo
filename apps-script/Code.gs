@@ -217,7 +217,11 @@ function doPost(e) {
       if(o.helmets)addLine_(f,item++,"Helmet rental",DKK.rentalCents,o.helmets);
       if(o.boots)addLine_(f,item++,"Boots rental",DKK.rentalCents,o.boots);
       const session=stripe_("post","/checkout/sessions",f);
-      if(!validCheckout_(session))throw new Error("Could not start Stripe checkout.");
+      // Never send a rider to checkout if Stripe's total differs from our server calculation.
+      // Existing static Payment Links cannot satisfy this check.
+      assertCheckoutTotal_(session, {
+        id: id, mode: "payment", totalCents: o.totalCents
+      });
       try { saveOutride_(o,session,id); }
       catch(err) { expire_(session.id);throw err; }
       return page_("Booking "+id+" recorded. Continue to secure Stripe payment (RM"+(o.totalCents/100).toFixed(2)+"). Your ride remains subject to stable confirmation.",session.url);
@@ -240,7 +244,10 @@ function doPost(e) {
         cancel_url:DKK.baseUrl+"/membership.html?checkout=cancel"
       };
       const session=stripe_("post","/checkout/sessions",f);
-      if(!validCheckout_(session))throw new Error("Could not start Stripe checkout.");
+      // Membership is a fixed RM50 monthly subscription; verify its initial total.
+      assertCheckoutTotal_(session, {
+        id: id, mode: "subscription", totalCents: DKK.membershipCents
+      });
       try {saveMember_(m,session,id);} catch(err){expire_(session.id);throw err;}
       return page_("Registration "+id+" saved. Continue to secure Stripe to start your RM50/month subscription.",session.url);
     }
@@ -254,6 +261,27 @@ function validCheckout_(s) {
   return s&&/^cs_(test_)?[A-Za-z0-9_]+$/.test(String(s.id||""))&&
     /^https:\/\/checkout\.stripe\.com\//.test(String(s.url||""));
 }
+/**
+ * Fail closed if Stripe returns a payment URL with an unexpected total.
+ * The booking displayed total is not trusted: parseOutride_ independently
+ * validates each rider and rental choice, then computes expected cents.
+ */
+function assertCheckoutTotal_(session, expected) {
+  const valid = validCheckout_(session) &&
+    session.mode === expected.mode &&
+    session.currency === "myr" &&
+    Number.isInteger(session.amount_total) &&
+    session.amount_total === expected.totalCents &&
+    session.client_reference_id === expected.id &&
+    !session.payment_link;
+  if (!valid) {
+    if (session && /^cs_(test_)?[A-Za-z0-9_]+$/.test(String(session.id || ""))) {
+      expire_(session.id);
+    }
+    throw new Error("Stripe checkout total did not match the calculated booking amount. No payment link was issued.");
+  }
+}
+
 function expire_(id) {
   try{stripe_("post","/checkout/sessions/"+encodeURIComponent(id)+"/expire",{});}
   catch(err){console.warn("Could not expire untracked checkout: "+err.message);}
@@ -390,22 +418,38 @@ function notifyPaid_(to,id,text) {
 }
 
 
-/** Manual validation smoke checks; no API calls, charges or Sheet writes. */
+/** No-payment calculation self-test. Run manually in Apps Script. */
 function testDkkBookingValidation() {
-  if(validRideDate_("2026-11-16"))throw new Error("Monday must be rejected");
-  const sample={
-    name:"Group Contact",phone:"+60192584291",email:"example@example.com",
-    pax:"2",date:"2026-11-17",session:DKK.sessions[0],timing_ack:"yes",
-    riders_json:JSON.stringify([
-      {name:"Rider One",phone:"+60111111111",weight:"65",experience:"Beginner",helmet:true,boots:false},
-      {name:"Rider Two",phone:"+60122222222",weight:"72",experience:"Intermediate",helmet:false,boots:true}
+  const today = new Date();
+  let date = "";
+  for (let offset = 1; offset <= 8; offset++) {
+    const candidate = new Date(today.getTime() + offset * 86400000);
+    const localDate = Utilities.formatDate(candidate, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    if (validRideDate_(localDate)) {
+      date = localDate;
+      break;
+    }
+  }
+  if (!date) throw new Error("Could not find a valid future ride date.");
+
+  const sample = {
+    name: "Group Contact",
+    phone: "+60192584291",
+    email: "example@example.com",
+    pax: "3",
+    date: date,
+    session: DKK.sessions[0],
+    timing_ack: "yes",
+    riders_json: JSON.stringify([
+      {name:"Rider One",phone:"+60111111111",weight:65,experience:"Beginner",helmet:true,boots:false},
+      {name:"Rider Two",phone:"+60122222222",weight:72,experience:"Intermediate",helmet:true,boots:true},
+      {name:"Rider Three",phone:"+60133333333",weight:81,experience:"Experienced",helmet:false,boots:false}
     ])
   };
-  const today=Utilities.formatDate(new Date(),"Asia/Kuala_Lumpur","yyyy-MM-dd");
-  if(sample.date>=today){
-    const result=parseOutride_(sample);
-    if(result.totalCents!==53000||result.helmets!==1||result.boots!==1)
-      throw new Error("Incorrect two-rider calculation.");
-  }
-  console.log("Basic validations passed; no payment was created.");
+
+  const order = parseOutride_(sample);
+  if (order.totalCents !== 79500 || order.pax !== 3 ||
+      order.helmets !== 2 || order.boots !== 1)
+    throw new Error("Three-rider booking did not total RM795.");
+  console.log("Calculation verified: 3 riders, 2 helmets, 1 boots = RM795. No charge created.");
 }
