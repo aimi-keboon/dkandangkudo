@@ -3,14 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Redirecting to Keboon</title>
-  <meta http-equiv="refresh" content="0; url=https://keboon.net/">
-  <link rel="canonical" href="https://keboon.net/">
-  <script>
-    window.location.replace("https://keboon.net/");
-  </script>
+  <title>Horse Riding Lessons &amp; Paddock Rides | D'Kandang Kudo Stable</title>
+  <meta name="description" content="Horse riding lessons, trial lessons and paddock riding at D'Kandang Kudo Stable. Packages from RM75; paddock riding RM100 per hour.">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <p>This website has moved to <a href="https://keboon.net/">keboon.net</a>.</p>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">D'Kandang <span>Kudo</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="#lessons">Lessons &amp; pricing</a>
+        <a href="#rentals">Equipment rental</a>
+        <a class="btn btn-primary" href="booking.html">Book a ride</a>
+      </div>
+    </div>
+  </nav>
+  <main id="main-content">
+    <section class="hero riding-hero">
+      <div class="container">
+        <p class="hero-kicker">D'Kandang Kudo Stable · Negeri Sembilan</p>
+        <h1>Start your horse riding journey.</h1>
+        <p class="lead">Learn at your own pace with our riding lessons, or enjoy time on horseback in the paddock. Choose the option that suits you.</p>
+        <div class="hero-facts"><span>Trial · 2 sessions</span><span>5 or 10 lesson sessions</span><span>Paddock riding by the hour</span></div>
+        <div class="hero-actions"><a class="btn btn-light" href="booking.html">Choose your riding option</a></div>
+      </div>
+    </section>
+    <section class="section" id="lessons">
+      <div class="container">
+        <p class="section-kicker">Our riding options</p>
+        <h2>Simple pricing. Your pace.</h2>
+        <p class="lead">All prices are per rider. Dates and times are subject to stable confirmation.</p>
+        <div class="riding-price-grid">
+          <article class="riding-price-card">
+            <p class="section-kicker">Try riding</p>
+            <h3>Trial lessons</h3>
+            <p class="price-large">RM75</p>
+            <p>2 riding sessions</p>
+            <a class="btn btn-outline" href="booking.html?service=lesson-trial">Book trial</a>
+          </article>
+          <article class="riding-price-card">
+            <p class="section-kicker">Learn &amp; progress</p>
+            <h3>5-session lessons</h3>
+            <p class="price-large">RM450</p>
+            <p>5 riding lesson sessions</p>
+            <a class="btn btn-outline" href="booking.html?service=lesson-5">Book 5 sessions</a>
+          </article>
+          <article class="riding-price-card">
+            <p class="section-kicker">Keep improving</p>
+            <h3>10-session lessons</h3>
+            <p class="price-large">RM850</p>
+            <p>10 riding lesson sessions</p>
+            <a class="btn btn-outline" href="booking.html?service=lesson-10">Book 10 sessions</a>
+          </article>
+          <article class="riding-price-card">
+            <p class="section-kicker">Ride in the arena</p>
+            <h3>Paddock riding</h3>
+            <p class="price-large">RM100<span class="price-suffix">/hour</span></p>
+            <p>Choose your preferred number of hours</p>
+            <a class="btn btn-outline" href="booking.html?service=paddock-hour">Book paddock ride</a>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="section alt" id="rentals">
+      <div class="container">
+        <p class="section-kicker">Optional equipment</p>
+        <h2>Boots &amp; helmets available.</h2>
+        <p class="lead">Add equipment for each rider during booking. Rentals are RM15 per item per rider for the initial visit; additional visits can be arranged with the stable.</p>
+        <div class="equipment-prices"><div><strong>Helmet rental</strong><span>RM15</span></div><div><strong>Boots rental</strong><span>RM15</span></div></div>
+        <p class="note">Riding options and equipment are subject to availability and safety checks.</p>
+      </div>
+    </section>
+    <section class="section invitation">
+      <div class="container invitation-inner">
+        <div><p class="section-kicker">Ready to ride?</p><h2>Request your preferred date.</h2><p>Our team will confirm availability and suitability before your booking is final.</p></div>
+        <a class="btn btn-primary" href="booking.html">Start booking</a>
+      </div>
+    </section>
+  </main>
+  <footer><div class="container">© <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru, Negeri Sembilan · <a href="tel:+60192584291">+60 19-258 4291</a></div></footer>
+  <script src="script.js"></script>
 </body>
 </html>

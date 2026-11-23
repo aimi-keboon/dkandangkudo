@@ -1407,3 +1407,17 @@ footer a { font-weight:800;text-decoration:underline;text-underline-offset:3px; 
   .rider-grid,.rental-options { grid-template-columns:1fr;gap:12px; }
   .membership-checkout-summary { flex-direction:column;align-items:flex-start; }
 }
+
+/* Lessons and paddock booking */
+.riding-price-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; margin-top:28px; }
+.riding-price-card { display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:30px; background:#fff; border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow); }
+.riding-price-card h3 { font-size:1.4rem; }
+.riding-price-card .price-large { margin:4px 0; }
+.riding-price-card p:not(.section-kicker) { margin:0 0 16px; color:var(--muted); }
+.riding-price-card .btn { margin-top:auto; }
+.price-suffix { font-size:1.15rem; letter-spacing:0; }
+.equipment-prices { max-width:640px; display:grid; gap:14px; margin:22px 0; }
+.equipment-prices>div { background:#fff; padding:18px 22px; border:1px solid var(--line); border-radius:15px; display:flex; justify-content:space-between; gap:15px; }
+.equipment-prices span { font-weight:800; color:var(--forest); }
+[hidden] { display:none !important; }
+@media(max-width:700px) { .riding-price-grid { grid-template-columns:1fr; } .riding-price-card { padding:24px; } }

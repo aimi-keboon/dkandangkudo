@@ -1,129 +1,14 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Membership | D'Kandang Kudo Stable</title>
-  <meta name="description" content="Join D'Kandang Kudo Stable membership for RM50/month and unlock progressive outride discounts up to 30%, plus event, class and facility offers.">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <a class="skip-link" href="#main-content">Skip to main content</a>
-  <nav class="nav">
-  <div class="container nav-inner">
-    <a class="brand" href="index.html">D'Kandang <span>Kudo</span></a>
-
-    <button
-      class="nav-toggle"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-      aria-controls="navLinks"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
-    <div class="nav-links" id="navLinks">
-      <a href="index.html">Outride</a>
-      <a href="#benefits">Benefits</a>
-      <a class="btn btn-primary" href="#register">Join Membership</a>
-    </div>
-  </div>
-</nav>
-
-  <header class="membership-hero">
-    <div class="container">
-      <h1>More rides. Better value.</h1>
-      <p class="lead">Join for RM50/month and earn a bigger outride discount as you ride more, up to a maximum of 30%.</p>
-
-      </div>
-  </header>
-
-  <main id="main-content">
-    <section class="section alt" id="benefits">
-      <div class="container">
-        <h2>More than an outride discount.</h2>
-        <div class="benefits">
-          <div class="card">
-            <h3>Progressive outride savings</h3>
-            <p>Save 10%, then 20%, then up to 30% as you complete more outrides.</p>
-          </div>
-          <div class="card">
-            <h3>Special event access</h3>
-            <p>Members can receive access to selected stable events and member-focused activities.</p>
-          </div>
-          <div class="card">
-            <h3>Class special offers</h3>
-            <p>Eligible members can receive selected offers for riding classes and related programmes.</p>
-          </div>
-          <div class="card">
-            <h3>Facility-use offers</h3>
-            <p>Members can receive selected offers for eligible stable facility use.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="register">
-      <div class="container two-col">
-        <div>
-          <h2>Member details</h2>
-          <p class="lead">One membership is RM50 per month, billed automatically through Stripe until cancelled. Fill in your details to set up your subscription. Membership becomes active after Stripe verifies payment.</p>
-          <form class="form" id="memberForm" method="POST" action="https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec">
-
-<!-- Anti-spam honeypot / "flowerpot": real users never see or fill this. -->
-<div class="flowerpot-wrap" aria-hidden="true">
-  <label for="memberCompanyWebsite">Company website</label>
-  <input
-    id="memberCompanyWebsite"
-    name="flowerpot"
-    type="text"
-    tabindex="-1"
-    autocomplete="off"
-  >
-</div>
-<input type="hidden" name="source" value="membership-registration">
-            <div>
-              <label for="name">Full name</label>
-              <input id="name" name="name" required autocomplete="name">
-            </div>
-            <div>
-              <label for="phone">Phone number</label>
-              <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel" placeholder="+60 12-345 6789">
-            </div>
-            <div>
-              <label for="email">Email</label>
-              <input id="email" type="email" name="email" required autocomplete="email">
-            </div>
-            <div>
-              <label for="experience">Riding experience</label>
-              <select id="experience" name="experience" required>
-                <option value="" disabled selected>Select your experience</option>
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Experienced</option>
-              </select>
-            </div>
-            <div class="membership-checkout-summary"><strong>RM50 / month</strong><span>Recurring monthly membership · cancel subject to membership terms</span></div>
-            <label class="check-row"><input type="checkbox" name="subscription_ack" value="yes" required><span>I understand this is a recurring RM50 monthly subscription, not a one-time registration fee.</span></label>
-            <button class="btn btn-primary" type="submit">Continue to secure Stripe subscription</button>
-            <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
-          </form>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <footer>
-  <div class="container">
-    © <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru, Negeri Sembilan
-    ·
-    <a href="tel:+60192584291">+60 19-258 4291</a>
-  </div>
-</footer>
-  <script src="script.js"></script>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Horse Riding at D'Kandang Kudo Stable</title>
+<meta name="description" content="Explore horse riding lessons and paddock rides at D'Kandang Kudo Stable.">
+<link rel="stylesheet" href="styles.css"></head>
+<body><a class="skip-link" href="#main-content">Skip to main content</a>
+<nav class="nav"><div class="container nav-inner"><a class="brand" href="index.html">D'Kandang <span>Kudo</span></a><div class="nav-links"><a href="index.html">Home</a><a class="btn btn-primary" href="booking.html">Book riding</a></div></div></nav>
+<main class="section" id="main-content"><div class="container"><p class="section-kicker">Our riding options have changed</p>
+<h1 class="page-title">Explore lessons &amp; paddock riding.</h1>
+<p class="lead">We are no longer accepting new membership registrations. Choose a 2-session trial, a 5- or 10-session riding lesson package, or an hourly paddock ride instead.</p>
+<a class="btn btn-primary" href="index.html#lessons">View riding options</a>
+<p class="note">Existing members can contact the stable at <a href="tel:+60192584291">+60 19-258 4291</a> about their membership.</p></div></main>
+<footer><div class="container">© <span id="year"></span> D'Kandang Kudo Stable · Kampung Jimah Baru, Negeri Sembilan</div></footer>
+<script src="script.js"></script></body></html>
