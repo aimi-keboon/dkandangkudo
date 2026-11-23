@@ -4,7 +4,7 @@
  * Do not store Stripe secrets in GitHub or Sheets.
  */
 const DKK = Object.freeze({
-  outride: "Outride Bookings",
+  bookings: "Riding Bookings",
   membership: "Membership Registrations",
   riders: "Outride Riders",
   baseUrl: "https://dkandangkudo.com",
@@ -59,9 +59,39 @@ function ensureSheet_(book, name, headers) {
   sheet.setFrozenRows(1);
   return sheet;
 }
+/**
+ * Rename the existing bookings tab in place rather than creating a new blank tab.
+ * Renaming preserves its sheet ID, rows, formulas, history and existing payment IDs.
+ * Accept the historical code name and the visible "Oride booking" spelling.
+ */
+function migrateBookingTab_(book) {
+  const target = book.getSheetByName(DKK.bookings);
+  const aliases = ["Outride Bookings", "Outride Booking", "Oride booking", "Oride bookings"];
+  const legacy = book.getSheets().filter(sheet =>
+    aliases.some(name => name.toLowerCase() === sheet.getName().trim().toLowerCase()));
+  if (target && legacy.length) {
+    throw new Error("Both Riding Bookings and a legacy booking tab exist. Resolve them before setup; no data was changed.");
+  }
+  if (legacy.length > 1) {
+    throw new Error("Multiple old booking tabs found. Rename/reconcile them manually to avoid splitting records.");
+  }
+  if (target) return target;
+  if (legacy.length === 1) {
+    legacy[0].setName(DKK.bookings);
+    return legacy[0];
+  }
+  // A new workbook may have no bookings tab yet. In a populated workbook,
+  // fail rather than silently creating an empty tab that hides old bookings.
+  if (book.getSheets().some(sheet => sheet.getLastRow() > 1)) {
+    throw new Error("Could not find the existing booking tab. Rename it to Riding Bookings manually, then rerun setup.");
+  }
+  return null;
+}
+
 function setupDkkCheckout() {
   const book = sheetBook_();
-  ensureSheet_(book,DKK.outride,OUT_HEADERS);
+  migrateBookingTab_(book);
+  ensureSheet_(book,DKK.bookings,OUT_HEADERS);
   ensureSheet_(book,DKK.membership,MEM_HEADERS);
   ensureSheet_(book,DKK.riders,RIDER_HEADERS);
   if (!ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === "syncDkkPayments")) {
@@ -177,7 +207,7 @@ function saveRiding_(order,session,id) {
   const lock=LockService.getScriptLock();lock.waitLock(25000);
   try {
     const book=sheetBook_();
-    const main=book.getSheetByName(DKK.outride),riders=book.getSheetByName(DKK.riders);
+    const main=book.getSheetByName(DKK.bookings),riders=book.getSheetByName(DKK.riders);
     if(!main||!riders)throw new Error("Run setupDkkCheckout first");
     const values=[new Date(),id,"Awaiting payment","Pending",safe_(order.name),safe_(order.phone),
       safe_(order.email),order.pax,order.unitCents/100,order.totalCents/100,order.date,order.preferredTime,
@@ -323,7 +353,7 @@ function syncDkkPayments() {
   if(!lock.tryLock(20000))return;
   try {
     const book=sheetBook_();
-    syncOutrides_(book.getSheetByName(DKK.outride));
+    syncOutrides_(book.getSheetByName(DKK.bookings));
     syncMemberships_(book.getSheetByName(DKK.membership));
   } finally{lock.releaseLock();}
 }

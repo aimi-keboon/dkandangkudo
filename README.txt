@@ -15,7 +15,7 @@ WEB FILES
 - membership.html: Retired membership signup information
 - styles.css: Shared styles
 - script.js: Mobile navigation and footer helpers
-- apps-script/Code.gs: Server-side input validation, prices, Stripe Checkout and Sheets logging
+- apps-script/Code.gs: Server-side input validation, prices, Stripe Checkout and Sheets logging; renames existing Oride booking / Outride Bookings tab to Riding Bookings in place on setup
 - apps-script/README.md: Mandatory deployment, privacy and payment instructions
 
 Bookings select one-hour slots within 7 AM–12 PM or 4 PM–7 PM (7, 8, 9, 10, 11 AM; 4, 5, 6 PM starts). Slots are requests, not guaranteed. For multi-session lesson packages, follow-up dates are arranged directly with the stable. New memberships and outrides are no longer sold. Existing membership subscription records and payment tracking remain intact; retiring new sales does not automatically cancel existing Stripe subscriptions.
