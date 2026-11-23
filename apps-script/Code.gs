@@ -8,13 +8,13 @@ const DKK = Object.freeze({
   membership: "Membership Registrations",
   riders: "Outride Riders",
   baseUrl: "https://dkandangkudo.com",
-  outrideCents: 25000,
+  ridingPrices: {"lesson-trial":7500,"lesson-5":45000,"lesson-10":85000,"paddock-hour":10000},
   rentalCents: 1500,
   membershipCents: 5000,
   maxPax: 10,
   // Existing LIVE Stripe subscription price for D'Kandang Kudo Stable Membership.
   membershipPriceId: "price_1UEnG7L8CyJDBl205qCoFbh9",
-  sessions: ["Morning — 8:00 AM to 10:00 AM", "Evening — 4:30 PM to 6:30 PM"],
+
   experiences: ["Beginner", "Intermediate", "Experienced"]
 });
 const OUT_HEADERS = [
@@ -22,7 +22,7 @@ const OUT_HEADERS = [
   "Pax","Price / Pax (RM)","Total (RM)","Ride Date","Session","Notes",
   "Timing Acknowledged","Source",
   "Stripe Session ID","Stripe Customer ID","Payment Confirmed At","Last Checked At",
-  "Helmet Count","Boots Count","Rental Total (RM)"
+  "Helmet Count","Boots Count","Rental Total (RM)","Riding Option","Paddock Hours","Preferred Time"
 ];
 const MEM_HEADERS = [
   "Submitted At","Member Registration ID","Registration Status","Payment Status","Name","Phone",
@@ -124,12 +124,18 @@ function validRideDate_(text) {
   const date=new Date(text+"T12:00:00+08:00");
   return date.getUTCDay()!==1; // Malaysia local noon has the same calendar weekday in UTC
 }
-function parseOutride_(p) {
+function parseRiding_(p) {
   const name=String(p.name||"").trim(), phone=String(p.phone||"").trim(),email=String(p.email||"").trim();
-  const pax=Number(p.pax),session=String(p.session||""),date=String(p.date||"");
+  const pax=Number(p.pax),service=String(p.service||""),date=String(p.date||"");
+  const hours=service==="paddock-hour"?Number(p.hours):1;
+  const preferredTime=String(p.preferred_time||"");
+  const unitCents=DKK.ridingPrices[service];
   if(!name || name.length>120 || !validPhone_(phone) || !validEmail_(email) ||
     !Number.isInteger(pax) || pax<1 || pax>DKK.maxPax ||
-    !DKK.sessions.includes(session) || !validRideDate_(date) || p.timing_ack!=="yes")
+    !Object.prototype.hasOwnProperty.call(DKK.ridingPrices,service) ||
+    !Number.isInteger(hours) || hours<1 || hours>8 ||
+    !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(preferredTime) ||
+    !validRideDate_(date) || p.timing_ack!=="yes")
     throw new Error("Please check the booking contact, date, session, and rider count.");
   const json=String(p.riders_json||"");
   if(json.length>18000)throw new Error("Too much rider information.");
@@ -149,8 +155,8 @@ function parseOutride_(p) {
   });
   const helmets=sanitized.filter(r=>r.helmet).length;
   const boots=sanitized.filter(r=>r.boots).length;
-  const totalCents=pax*DKK.outrideCents+(helmets+boots)*DKK.rentalCents;
-  return {name,phone,email,pax,date,session,riders:sanitized,helmets,boots,
+  const totalCents=pax*unitCents*hours+(helmets+boots)*DKK.rentalCents;
+  return {name,phone,email,pax,date,service,hours,preferredTime,unitCents,riders:sanitized,helmets,boots,
     totalCents,notes:String(p.notes||"").trim().slice(0,1500)};
 }
 function validateMembership_(p) {
@@ -167,14 +173,14 @@ function addLine_(fields,index,name,amount,quantity) {
   fields["line_items["+index+"][price_data][product_data][name]"]=name;
   fields["line_items["+index+"][quantity]"]=String(quantity);
 }
-function saveOutride_(order,session,id) {
+function saveRiding_(order,session,id) {
   const lock=LockService.getScriptLock();lock.waitLock(25000);
   try {
     const book=sheetBook_();
     const main=book.getSheetByName(DKK.outride),riders=book.getSheetByName(DKK.riders);
     if(!main||!riders)throw new Error("Run setupDkkCheckout first");
     const values=[new Date(),id,"Awaiting payment","Pending",safe_(order.name),safe_(order.phone),
-      safe_(order.email),order.pax,250,order.totalCents/100,order.date,order.session,
+      safe_(order.email),order.pax,order.unitCents/100,order.totalCents/100,order.date,order.preferredTime,
       safe_(order.notes),"Yes","public-outride-booking",safe_(session.id),"","","",
       order.helmets,order.boots,(order.helmets+order.boots)*15];
     main.appendRow(values);
@@ -202,17 +208,19 @@ function doPost(e) {
     if(props_().getProperty("DKK_CHECKOUT_ENABLED")!=="true")
       return page_("Secure checkout is not enabled yet. Please contact the stable.",null);
     const source=String(p.source||"");
-    if(source==="public-outride-booking") {
-      const o=parseOutride_(p);
+    if(source==="riding-booking") {
+      const o=parseRiding_(p);
       rateLimit_(o.email,o.phone);
-      const id=reference_("OUT");
+      const id=reference_("RID");
       const f={
         mode:"payment",customer_email:o.email,"client_reference_id":id,
         "metadata[booking_id]":id,
         success_url:DKK.baseUrl+"/booking.html?checkout=success&ref="+encodeURIComponent(id),
         cancel_url:DKK.baseUrl+"/booking.html?checkout=cancel"
       };
-      addLine_(f,0,"Guided outride",DKK.outrideCents,o.pax);
+      const productNames={"lesson-trial":"Trial lessons (2 sessions)","lesson-5":"Horse riding lessons (5 sessions)",
+         "lesson-10":"Horse riding lessons (10 sessions)","paddock-hour":"Paddock riding (hourly)"};
+       addLine_(f,0,productNames[o.service],o.unitCents,o.pax*o.hours);
       let item=1;
       if(o.helmets)addLine_(f,item++,"Helmet rental",DKK.rentalCents,o.helmets);
       if(o.boots)addLine_(f,item++,"Boots rental",DKK.rentalCents,o.boots);
@@ -222,11 +230,14 @@ function doPost(e) {
       assertCheckoutTotal_(session, {
         id: id, mode: "payment", totalCents: o.totalCents
       });
-      try { saveOutride_(o,session,id); }
+      try { saveRiding_(o,session,id); }
       catch(err) { expire_(session.id);throw err; }
       return page_("Booking "+id+" recorded. Continue to secure Stripe payment (RM"+(o.totalCents/100).toFixed(2)+"). Your ride remains subject to stable confirmation.",session.url);
     }
     if(source==="membership-registration") {
+       return page_("New memberships are no longer offered. Please contact the stable about an existing membership.",null);
+     }
+     if(false && source==="membership-registration") {
       const m=validateMembership_(p);rateLimit_(m.email,m.phone);
       const priceId=DKK.membershipPriceId;
       if(!/^price_[A-Za-z0-9]+$/.test(priceId))throw new Error("Subscription price is not configured.");
@@ -263,7 +274,7 @@ function validCheckout_(s) {
 }
 /**
  * Fail closed if Stripe returns a payment URL with an unexpected total.
- * The booking displayed total is not trusted: parseOutride_ independently
+ * The booking displayed total is not trusted: parseRiding_ independently
  * validates each rider and rental choice, then computes expected cents.
  */
 function assertCheckoutTotal_(session, expected) {
@@ -286,7 +297,7 @@ function expire_(id) {
   try{stripe_("post","/checkout/sessions/"+encodeURIComponent(id)+"/expire",{});}
   catch(err){console.warn("Could not expire untracked checkout: "+err.message);}
 }
-function doGet(){return page_("Please start your booking or membership registration on dkandangkudo.com.",null);}
+function doGet(){return page_("Please start your riding booking on dkandangkudo.com.",null);}
 function page_(message,url) {
   const safeUrl=url&&/^https:\/\/checkout\.stripe\.com\//.test(url)?url:"";
   const action=safeUrl?
@@ -343,8 +354,8 @@ function syncOutrides_(sheet) {
       sheet.getRange(i+2,3).setValue(booking);
       sheet.getRange(i+2,4).setValue(status);
       sheet.getRange(i+2,19).setValue(new Date());
-      if(status==="Paid"&&previous!=="Paid")notifyPaid_(String(row[6]),id,"Outride payment verified. Your ride is awaiting stable confirmation.");
-    } catch(err){console.warn("Outride sync error "+id+": "+err.message);}
+      if(status==="Paid"&&previous!=="Paid")notifyPaid_(String(row[6]),id,"Riding payment verified. Your ride is awaiting stable confirmation.");
+    } catch(err){console.warn("Riding sync error "+id+": "+err.message);}
   }
 }
 function syncMemberships_(sheet) {
