@@ -16,7 +16,7 @@
   <main id="main-content"><section class="section" id="booking"><div class="container booking-layout"><div>
     <p class="section-kicker">Riding lessons &amp; paddock</p>
     <h1 class="page-title">Request your riding slot</h1>
-    <p class="lead">Choose a package, preferred first date and time, and complete each rider's details. Your booking is subject to stable confirmation of availability and suitability. Lesson package follow-up dates are arranged directly with the stable.</p>
+    <p class="lead">Choose a package and a preferred one-hour riding slot, then complete each rider's details. Your booking is subject to stable confirmation of availability and suitability. Lesson package follow-up dates are arranged directly with the stable.</p>
     <form class="form booking-form" id="publicBookingForm" method="POST" action="https://script.google.com/macros/s/AKfycbzDm56EjwkL8YZOpj6QiUJW3RRKGD9P7KAPIwXt4L7vbrRtP_bkitQiiew4XDn3WBAL/exec">
       <div class="flowerpot-wrap" aria-hidden="true"><label for="companyWebsite">Company website</label><input id="companyWebsite" name="flowerpot" type="text" tabindex="-1" autocomplete="off"></div>
       <input type="hidden" name="source" value="riding-booking">
@@ -30,19 +30,35 @@
           <option value="paddock-hour">Ride in the paddock — RM100/hour</option>
         </select>
       </div>
-      <div id="hoursGroup" hidden><label for="hours">Paddock hours per rider</label><input id="hours" type="number" name="hours" min="1" max="8" step="1" value="1" inputmode="numeric"><p class="small">RM100 per hour per rider; maximum 8 hours per booking.</p></div>
+      <input type="hidden" id="hours" name="hours" value="1">
       <div class="form-grid"><div><label for="bookingName">Main booking contact name</label><input id="bookingName" name="name" required maxlength="120" autocomplete="name" placeholder="Your full name"></div>
       <div><label for="bookingPhone">Main booking contact mobile</label><input id="bookingPhone" name="phone" type="tel" required autocomplete="tel" placeholder="+60 12-345 6789"></div></div>
       <div><label for="bookingEmail">Confirmation email</label><input id="bookingEmail" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
-      <div><label for="pax">Number of riders</label><input id="pax" type="number" name="pax" min="1" max="10" step="1" value="1" required inputmode="numeric"><p class="small">The selected package or paddock hours are charged per rider, up to 10 riders. Provide details for everyone.</p></div>
+      <div><label for="pax">Number of riders</label><input id="pax" type="number" name="pax" min="1" max="10" step="1" value="1" required inputmode="numeric"><p class="small">The selected lesson package or one-hour paddock ride is charged per rider, up to 10 riders. Provide details for everyone.</p></div>
       <fieldset class="riders-fieldset"><legend>Rider details &amp; equipment rental</legend><p class="small">Helmet rental RM15 and boots rental RM15 per rider for the initial visit. Future lesson-session rentals can be arranged separately.</p><div id="ridersContainer" class="riders-container"></div></fieldset>
       <div class="form-grid"><div><label for="rideDate">Preferred first ride date</label><input id="rideDate" type="date" name="date" required><div id="rideDateHint" class="small">Closed Mondays. All dates are subject to confirmation.</div></div>
-      <div><label for="preferredTime">Preferred start time</label><input id="preferredTime" type="time" name="preferred_time" required><p class="small">Our team will confirm the actual time.</p></div></div>
+      <div><label for="preferredTime">Preferred one-hour slot</label>
+        <select id="preferredTime" name="preferred_time" required>
+          <option value="" selected disabled>Choose a 1-hour slot</option>
+          <optgroup label="Morning · 7:00 AM – 12:00 PM">
+            <option value="07:00">7:00 AM – 8:00 AM</option>
+            <option value="08:00">8:00 AM – 9:00 AM</option>
+            <option value="09:00">9:00 AM – 10:00 AM</option>
+            <option value="10:00">10:00 AM – 11:00 AM</option>
+            <option value="11:00">11:00 AM – 12:00 PM</option>
+          </optgroup>
+          <optgroup label="Evening · 4:00 PM – 7:00 PM">
+            <option value="16:00">4:00 PM – 5:00 PM</option>
+            <option value="17:00">5:00 PM – 6:00 PM</option>
+            <option value="18:00">6:00 PM – 7:00 PM</option>
+          </optgroup>
+        </select>
+        <p class="small">Each riding session lasts 1 hour. The stable will confirm your slot.</p></div></div>
       <div><label for="bookingNotes">Notes <span class="small">(optional)</span></label><textarea id="bookingNotes" name="notes" maxlength="1500" placeholder="Anything we should know, including preferred dates for later lessons?"></textarea></div>
       <label class="check-row"><input id="timingAck" name="timing_ack" type="checkbox" value="yes" required><span>I understand that my requested date and time are not confirmed until the stable verifies availability, rider suitability and weather or safety conditions.</span></label>
       <div class="booking-summary" id="bookingSummary" aria-live="polite"><div><span class="small">RIDING OPTION + OPTIONAL RENTALS</span><strong id="bookingTotal">RM75 total</strong><span class="small" id="paxPriceText">1 rider × RM75</span><span class="small" id="rentalPriceText">Rentals: RM0</span><span class="small" id="selectedSessionText">Choose your preferred date and time above.</span></div></div>
       <button class="btn btn-primary booking-submit" type="submit">Review Booking &amp; Continue to Stripe</button>
-      <p class="small">Our payment service independently recalculates the price. Payment does not guarantee a slot; the stable will confirm your booking.</p>
+      <p class="small">Our payment service independently recalculates the price. Every selected riding slot is one hour and remains subject to stable confirmation.</p>
       <p id="bookingMessage" class="form-message" role="status" aria-live="polite"></p>
     </form>
   </div></div></section></main>
