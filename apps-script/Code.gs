@@ -181,8 +181,9 @@ function saveRiding_(order,session,id) {
     if(!main||!riders)throw new Error("Run setupDkkCheckout first");
     const values=[new Date(),id,"Awaiting payment","Pending",safe_(order.name),safe_(order.phone),
       safe_(order.email),order.pax,order.unitCents/100,order.totalCents/100,order.date,order.preferredTime,
-      safe_(order.notes),"Yes","public-outride-booking",safe_(session.id),"","","",
-      order.helmets,order.boots,(order.helmets+order.boots)*15];
+      safe_(order.notes),"Yes","riding-booking",safe_(session.id),"","","",
+      order.helmets,order.boots,(order.helmets+order.boots)*15,
+      safe_(order.service),order.hours,safe_(order.preferredTime)];
     main.appendRow(values);
     const riderRows=order.riders.map((r,i)=>[id,i+1,safe_(r.name),safe_(r.phone),r.weight,
       r.experience,r.helmet?"Yes":"No",r.boots?"Yes":"No"]);
@@ -429,38 +430,30 @@ function notifyPaid_(to,id,text) {
 }
 
 
-/** No-payment calculation self-test. Run manually in Apps Script. */
+/** Test pricing and reject old outrides without charging Stripe. */
 function testDkkBookingValidation() {
-  const today = new Date();
-  let date = "";
-  for (let offset = 1; offset <= 8; offset++) {
-    const candidate = new Date(today.getTime() + offset * 86400000);
-    const localDate = Utilities.formatDate(candidate, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
-    if (validRideDate_(localDate)) {
-      date = localDate;
-      break;
-    }
+  const now=new Date();
+  let date="";
+  for(let i=1;i<=8;i++){
+    const d=Utilities.formatDate(new Date(now.getTime()+i*86400000),"Asia/Kuala_Lumpur","yyyy-MM-dd");
+    if(validRideDate_(d)){date=d;break;}
   }
-  if (!date) throw new Error("Could not find a valid future ride date.");
-
-  const sample = {
-    name: "Group Contact",
-    phone: "+60192584291",
-    email: "example@example.com",
-    pax: "3",
-    date: date,
-    session: DKK.sessions[0],
-    timing_ack: "yes",
-    riders_json: JSON.stringify([
-      {name:"Rider One",phone:"+60111111111",weight:65,experience:"Beginner",helmet:true,boots:false},
-      {name:"Rider Two",phone:"+60122222222",weight:72,experience:"Intermediate",helmet:true,boots:true},
-      {name:"Rider Three",phone:"+60133333333",weight:81,experience:"Experienced",helmet:false,boots:false}
-    ])
-  };
-
-  const order = parseOutride_(sample);
-  if (order.totalCents !== 79500 || order.pax !== 3 ||
-      order.helmets !== 2 || order.boots !== 1)
-    throw new Error("Three-rider booking did not total RM795.");
-  console.log("Calculation verified: 3 riders, 2 helmets, 1 boots = RM795. No charge created.");
+  for(const service in DKK.ridingPrices){
+    const p={name:"Test",phone:"+60111111111",email:"test@example.com",pax:"2",
+      date:date,service:service,hours:service==="paddock-hour"?"3":"1",
+      preferred_time:"10:00",timing_ack:"yes",
+      riders_json:JSON.stringify([
+        {name:"Rider A",phone:"+60111111111",weight:65,experience:"Beginner",helmet:true,boots:false},
+        {name:"Rider B",phone:"+60122222222",weight:72,experience:"Intermediate",helmet:false,boots:true}
+      ])};
+    const order=parseRiding_(p);
+    const expected=2*DKK.ridingPrices[service]*(service==="paddock-hour"?3:1)+3000;
+    if(order.totalCents!==expected)throw new Error("Pricing mismatch for "+service);
+  }
+  const old={name:"Test",phone:"+60111111111",email:"test@example.com",pax:"1",
+    date:date,service:"outride",preferred_time:"10:00",timing_ack:"yes",riders_json:"[]"};
+  let rejected=false;
+  try{parseRiding_(old);}catch(e){rejected=true;}
+  if(!rejected)throw new Error("Retired outride accepted");
+  console.log("All service prices, rentals and retired outride rejection validated; no charges created.");
 }
