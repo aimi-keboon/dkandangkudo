@@ -4,17 +4,17 @@
 - Trial horse riding lessons: **RM75 for 2 sessions**
 - Horse riding lessons: **RM450 for 5 sessions**
 - Horse riding lessons: **RM850 for 10 sessions**
-- Paddock riding: **RM100 per hour** (1–8 hours per rider)
+- Paddock riding: **RM100 per one-hour session**
 - Optional helmet rental: **RM15 per rider for the initial visit**
 - Optional boots rental: **RM15 per rider for the initial visit**
 
-For lesson packages, the first preferred date and time are requested online; subsequent lesson dates and any future equipment rental arrangements are confirmed with the stable. Groups up to 10 riders can be booked. This is **not** an automatic scheduling or horse reservation system.
+Students select one of eight fixed one-hour slots: morning 7–8, 8–9, 9–10, 10–11, or 11–12; evening 4–5, 5–6, or 6–7. Out-of-hours starts are rejected by the backend. For lesson packages, the first preferred date and time are requested online; subsequent lesson dates and any future equipment rental arrangements are confirmed with the stable. Groups up to 10 riders can be booked. This is **not** an automatic scheduling or horse reservation system.
 
 ## What changed
 - Outrides are no longer offered and the legacy "public-outride-booking" source is not accepted.
 - New membership sales are disabled. The former membership page links back to riding options.
 - Historical Outride Bookings / Outride Riders / Membership Registrations sheets and Stripe payment sync logic are retained for existing records and subscriptions. New riding orders are stored in the existing bookings sheet with extra **Riding Option**, **Paddock Hours**, and **Preferred Time** columns.
-- The webpage does not set the final Stripe price. Apps Script independently validates the service and calculates: riders × service price × paddock hours (or 1 for lessons) + RM15 per selected helmet + RM15 per selected boots.
+- The webpage does not set the final Stripe price. Apps Script independently validates the service and calculates: riders × selected lesson package / one-hour paddock price + RM15 per selected helmet + RM15 per selected boots.
 - A Stripe Checkout Session's total, currency, mode and booking ID are checked before the checkout URL is returned.
 
 ## Important: Deploy backend before accepting payments
