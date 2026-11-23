@@ -24,11 +24,12 @@
       <input type="hidden" id="ridersJson" name="riders_json" value="">
       <div><label for="service">Riding option</label>
         <select id="service" name="service" required>
-          <option value="lesson-trial">Trial lessons — 2 sessions · RM75</option>
+          <option value="lesson-trial">Trial lessons — 2 sessions · RM75 (one-time per rider)</option>
           <option value="lesson-5">Horse riding lessons — 5 sessions · RM450</option>
           <option value="lesson-10">Horse riding lessons — 10 sessions · RM850</option>
           <option value="paddock-hour">Ride in the paddock — RM100/hour</option>
         </select>
+        <p class="small">Trial lessons are available only once per rider. Returning students should choose the 5- or 10-session package.</p>
       </div>
       <input type="hidden" id="hours" name="hours" value="1">
       <div class="form-grid"><div><label for="bookingName">Main booking contact name</label><input id="bookingName" name="name" required maxlength="120" autocomplete="name" placeholder="Your full name"></div>
