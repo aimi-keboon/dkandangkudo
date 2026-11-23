@@ -12,6 +12,7 @@ const DKK = Object.freeze({
   rentalCents: 1500,
   membershipCents: 5000,
   maxPax: 10,
+  oneHourSlots: ["07:00","08:00","09:00","10:00","11:00","16:00","17:00","18:00"],
   // Existing LIVE Stripe subscription price for D'Kandang Kudo Stable Membership.
   membershipPriceId: "price_1UEnG7L8CyJDBl205qCoFbh9",
 
@@ -127,14 +128,13 @@ function validRideDate_(text) {
 function parseRiding_(p) {
   const name=String(p.name||"").trim(), phone=String(p.phone||"").trim(),email=String(p.email||"").trim();
   const pax=Number(p.pax),service=String(p.service||""),date=String(p.date||"");
-  const hours=service==="paddock-hour"?Number(p.hours):1;
+  const hours=1; // Every riding reservation is for one hour; package sessions are booked separately.
   const preferredTime=String(p.preferred_time||"");
   const unitCents=DKK.ridingPrices[service];
   if(!name || name.length>120 || !validPhone_(phone) || !validEmail_(email) ||
     !Number.isInteger(pax) || pax<1 || pax>DKK.maxPax ||
     !Object.prototype.hasOwnProperty.call(DKK.ridingPrices,service) ||
-    !Number.isInteger(hours) || hours<1 || hours>8 ||
-    !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(preferredTime) ||
+    !DKK.oneHourSlots.includes(preferredTime) ||
     !validRideDate_(date) || p.timing_ack!=="yes")
     throw new Error("Please check the booking contact, date, session, and rider count.");
   const json=String(p.riders_json||"");
@@ -440,14 +440,14 @@ function testDkkBookingValidation() {
   }
   for(const service in DKK.ridingPrices){
     const p={name:"Test",phone:"+60111111111",email:"test@example.com",pax:"2",
-      date:date,service:service,hours:service==="paddock-hour"?"3":"1",
+      date:date,service:service,hours:"1",
       preferred_time:"10:00",timing_ack:"yes",
       riders_json:JSON.stringify([
         {name:"Rider A",phone:"+60111111111",weight:65,experience:"Beginner",helmet:true,boots:false},
         {name:"Rider B",phone:"+60122222222",weight:72,experience:"Intermediate",helmet:false,boots:true}
       ])};
     const order=parseRiding_(p);
-    const expected=2*DKK.ridingPrices[service]*(service==="paddock-hour"?3:1)+3000;
+    const expected=2*DKK.ridingPrices[service]+3000;
     if(order.totalCents!==expected)throw new Error("Pricing mismatch for "+service);
   }
   const old={name:"Test",phone:"+60111111111",email:"test@example.com",pax:"1",
@@ -455,5 +455,10 @@ function testDkkBookingValidation() {
   let rejected=false;
   try{parseRiding_(old);}catch(e){rejected=true;}
   if(!rejected)throw new Error("Retired outride accepted");
-  console.log("All service prices, rentals and retired outride rejection validated; no charges created.");
+  const invalidSlot={name:"Test",phone:"+60111111111",email:"test@example.com",pax:"1",
+    date:date,service:"paddock-hour",preferred_time:"12:00",timing_ack:"yes",riders_json:"[]"};
+  let blocked=false;
+  try{parseRiding_(invalidSlot);}catch(e){blocked=true;}
+  if(!blocked)throw new Error("Out-of-hours booking accepted");
+  console.log("Pricing, rentals, one-hour slot restrictions and retired outride rejection passed; no charges created.");
 }
