@@ -6,9 +6,9 @@
   const paxInput = document.getElementById("pax");
   const serviceInput = document.getElementById("service");
   const hoursInput = document.getElementById("hours");
-  const hoursGroup = document.getElementById("hoursGroup");
   const timeInput = document.getElementById("preferredTime");
   const prices = {"lesson-trial":75,"lesson-5":450,"lesson-10":850,"paddock-hour":100};
+  const allowedSlots = ["07:00","08:00","09:00","10:00","11:00","16:00","17:00","18:00"];
   const labels = {"lesson-trial":"Trial (2 sessions)","lesson-5":"5 lessons","lesson-10":"10 lessons","paddock-hour":"Paddock riding"};
   const container = document.getElementById("ridersContainer");
   const riderJsonInput = document.getElementById("ridersJson");
@@ -54,13 +54,11 @@
     const helmetCount = riders.filter(r => r.helmet).length;
     const bootsCount = riders.filter(r => r.boots).length;
     const isPaddock = serviceInput.value === "paddock-hour";
-    const hours = isPaddock ? Number(hoursInput.value) : 1;
-    const validHours = Number.isInteger(hours) && hours >= 1 && hours <= 8;
-    const base = riders.length * prices[serviceInput.value] * (validHours ? hours : 1);
+    const base = riders.length * prices[serviceInput.value];
     const total = base + (helmetCount + bootsCount) * 15;
     document.getElementById("bookingTotal").textContent = currency.format(total) + " total";
     document.getElementById("paxPriceText").textContent = riders.length + " rider(s) × " + labels[serviceInput.value] +
-      (isPaddock ? " × " + (validHours ? hours : 1) + " hour(s)" : "") + " · " + currency.format(base);
+      (isPaddock ? " (1 hour)" : "") + " · " + currency.format(base);
     document.getElementById("rentalPriceText").textContent =
       "Helmets: " + helmetCount + " × RM15 · Boots: " + bootsCount + " × RM15 (first visit)";
     document.getElementById("calculatedTotal").value = String(total);
@@ -71,7 +69,7 @@
       const date = new Date(dateInput.value + "T12:00:00");
       details.push(date.toLocaleDateString("en-MY", {weekday:"short",day:"numeric",month:"short",year:"numeric"}));
     }
-    if (timeInput.value) details.push(timeInput.value);
+    if (timeInput.value) details.push(timeInput.selectedOptions[0].textContent);
     document.getElementById("selectedSessionText").textContent =
       details.length ? details.join(" · ") : "Choose a preferred date and time above.";
   }
@@ -107,11 +105,8 @@
   container.addEventListener("change", updateSummary);
   dateInput.addEventListener("change", () => { validDate(); updateSummary(); });
   serviceInput.addEventListener("change", () => {
-    hoursInput.disabled = serviceInput.value !== "paddock-hour";
-    hoursGroup.hidden = hoursInput.disabled;
     updateSummary();
   });
-  hoursInput.addEventListener("input", updateSummary);
   timeInput.addEventListener("change", updateSummary);
 
   form.addEventListener("submit", event => {
@@ -119,6 +114,11 @@
     if (!validDate() || !form.checkValidity()) {
       event.preventDefault();
       form.reportValidity();
+      return;
+    }
+    if (!allowedSlots.includes(timeInput.value)) {
+      event.preventDefault();
+      message.textContent = "Choose one of the available one-hour riding slots.";
       return;
     }
     const riders = currentRiders();
@@ -141,12 +141,6 @@
       message.textContent = "Secure checkout is not configured yet. Please call +60 19-258 4291 to book.";
       return;
     }
-    if (serviceInput.value === "paddock-hour" &&
-      (!Number.isInteger(Number(hoursInput.value)) || Number(hoursInput.value) < 1 || Number(hoursInput.value) > 8)) {
-      event.preventDefault();
-      message.textContent = "Please choose between 1 and 8 whole paddock hours.";
-      return;
-    }
     updateSummary();
     submit.disabled = true;
     submit.textContent = "Preparing secure checkout…";
@@ -154,7 +148,5 @@
   });
   const requested = new URLSearchParams(window.location.search).get("service");
   if (Object.prototype.hasOwnProperty.call(prices, requested)) serviceInput.value = requested;
-  hoursInput.disabled = serviceInput.value !== "paddock-hour";
-  hoursGroup.hidden = hoursInput.disabled;
   render();
 })();
